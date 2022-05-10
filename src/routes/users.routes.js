@@ -1,15 +1,25 @@
 import { Router } from "express";
-
-import createUserController from "../controllers/createUser.controller";
-import readUsersController from "../controllers/readUsers.controller";
-import deleteUserController from "../controllers/deleteUser.controller";
-import updateUserController from "../controllers/updateUser.controller";
+import {
+  createUser,
+  readUserById,
+  readUsers,
+  updateUser,
+  userLogin,
+  deleteUser,
+} from "../controllers";
+import {
+  verifyAuthToken,
+  verifyEmailAvailability,
+  verifyUserIdExists,
+} from "../middlewares";
 
 const router = Router();
 
-router.post("", createUserController);
-router.get("", readUsersController);
-router.put("/:id", updateUserController);
-router.delete("/:id", deleteUserController);
+router.post("/signup", verifyEmailAvailability, createUser);
+router.post("/signin", userLogin);
+router.get("", readUsers);
+router.get("/:id", verifyUserIdExists, readUserById);
+router.put("/:id", verifyAuthToken, verifyUserIdExists, updateUser);
+router.delete("/:id", verifyAuthToken, verifyUserIdExists, deleteUser);
 
 export default router;
