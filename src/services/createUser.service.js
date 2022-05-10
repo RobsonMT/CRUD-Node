@@ -1,23 +1,25 @@
 import users from "../database";
 import { v4 as uuidv4 } from "uuid";
 
-const createUserService = (email, name, birthDate) => {
+const createUserService = (response, email, name, birthDate) => {
   const userArealdyExists = users.find((user) => user.email === email);
 
   if (userArealdyExists) {
-    return "This email address is already being used";
+    return response
+      .status(404)
+      .json({ error: "This email address is already being used" });
   }
 
   const newUser = {
     email,
     name,
     birthDate,
-    // não está criando o id
+    id: uuidv4(),
   };
 
   users.push(newUser);
 
-  // não esta retornando o user
+  return newUser;
 };
 
 export default createUserService;

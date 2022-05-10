@@ -1,13 +1,15 @@
-import Router from "express"; // importação errada
+import { Router } from "express";
 
 import createUserController from "../controllers/createUser.controller";
-import listUsersController from "../controllers/listUsers.controller";
+import readUsersController from "../controllers/readUsers.controller";
 import deleteUserController from "../controllers/deleteUser.controller";
+import updateUserController from "../controllers/updateUser.controller";
 
-// Router não instanciado
+const router = Router();
 
-Router.post("", createUserController);
-Router.get("", listUsersController);
-Router.delete("/id", deleteUserController); // A utilização do route params está errada
+router.post("", createUserController);
+router.get("", readUsersController);
+router.put("/:id", updateUserController);
+router.delete("/:id", deleteUserController);
 
-export default Router;
+export default router;
