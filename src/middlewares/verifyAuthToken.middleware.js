@@ -1,23 +1,28 @@
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const verifyAuthToken = (request, response, next) => {
   let token = request.headers.authorization;
 
   if (!token) {
     return response.status(401).json({
-      message: "Missing Authorization token.",
+      message: "Missing authorization headers.",
     });
   }
 
   token = token.split(" ")[1];
 
-  jwt.verify(token, "SECRET_KEY", (error, decoded) => {
+  jwt.verify(token, process.env.SECRET_KEY, (error, decoded) => {
     if (error) {
       return response.status(401).json({ message: "Invalid token." });
     }
-  });
 
-  next();
+    request.decoded = decoded;
+
+    next();
+  });
 };
 
 export default verifyAuthToken;

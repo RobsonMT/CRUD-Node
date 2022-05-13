@@ -1,7 +1,6 @@
 import {
   createUserService,
-  readUsersService,
-  readUserByIdService,
+  readUserProfileService,
   userLoginService,
   updateUserService,
   deleteUserService,
@@ -9,8 +8,7 @@ import {
 
 export {
   createUserService,
-  readUsersService,
-  readUserByIdService,
+  readUserProfileService,
   userLoginService,
   updateUserService,
   deleteUserService,

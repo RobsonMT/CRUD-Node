@@ -1,7 +1,7 @@
 import app from "./app";
 
-const PORT = 3000;
+const port = 3000;
 
-app.listen(PORT, () => {
-  console.log(`App running!\nhttp://localhost:${PORT}/`);
+app.listen(port, () => {
+  console.log(`App running!\nhttp://localhost:${port}/`);
 });

@@ -1,65 +1,51 @@
+import users from "../database";
 import {
   createUserService,
+  readUserProfileService,
   userLoginService,
-  readUsersService,
-  readUserByIdService,
   updateUserService,
   deleteUserService,
 } from "../services";
 
-const createUser = async (request, response) => {
-  const { email, name, password } = request.body;
-
-  const user = await createUserService(email, name, password);
+const createUserController = async (request, response) => {
+  const user = await createUserService(request);
 
   return response.status(201).json(user);
 };
 
-const readUsers = (request, response) => {
-  const users = readUsersService();
-
-  return response.json(users);
+const readUsersController = (request, response) => {
+  return response.status(200).json(users);
 };
 
-const readUserById = (request, response) => {
-  const { id } = request.params;
+const readUserProfileController = (request, response) => {
+  const user = readUserProfileService(request);
 
-  const user = readUserByIdService(id);
-
-  return response.json(user);
+  return response.status(200).json(user);
 };
 
-const userLogin = (request, response) => {
-  const { email, password } = request.body;
+const userLoginController = (request, response) => {
+  const { status, message } = userLoginService(request.body);
 
-  const userLogin = userLoginService(email, password);
-
-  return response.json(userLogin);
+  return response.status(status).json(message);
 };
 
-const updateUser = async (request, response) => {
-  const { id } = request.params;
+const updateUserController = async (request, response) => {
+  const updatedUser = await updateUserService(request);
 
-  const { email, name, password } = request.body;
-
-  const updatedUser = await updateUserService(id, name, email, password);
-
-  return response.json(updatedUser);
+  return response.status(200).json(updatedUser);
 };
 
-const deleteUser = (request, response) => {
-  const { id } = request.params;
+const deleteUserController = (request, response) => {
+  const message = deleteUserService(request);
 
-  const deletedUser = deleteUserService(id);
-
-  return response.json(deletedUser);
+  return response.status(200).send(message);
 };
 
 export {
-  createUser,
-  readUsers,
-  readUserById,
-  userLogin,
-  updateUser,
-  deleteUser,
+  createUserController,
+  readUsersController,
+  readUserProfileController,
+  userLoginController,
+  updateUserController,
+  deleteUserController,
 };

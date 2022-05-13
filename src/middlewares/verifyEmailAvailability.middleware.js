@@ -6,9 +6,7 @@ const verifyEmailAvailability = (request, response, next) => {
   const emailAlreadyExists = users.find((user) => user.email === email);
 
   if (emailAlreadyExists) {
-    return response
-      .status(409)
-      .json({ error: "This email adress is already being used" });
+    return response.status(400).json({ message: "E-mail already registered" });
   }
 
   next();

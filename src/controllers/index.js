@@ -1,17 +1,17 @@
 import {
-  createUser,
-  readUsers,
-  readUserById,
-  userLogin,
-  updateUser,
-  deleteUser,
+  createUserController,
+  readUsersController,
+  readUserProfileController,
+  userLoginController,
+  updateUserController,
+  deleteUserController,
 } from "./user.controller";
 
 export {
-  createUser,
-  readUsers,
-  readUserById,
-  userLogin,
-  updateUser,
-  deleteUser,
+  createUserController,
+  readUsersController,
+  readUserProfileController,
+  userLoginController,
+  updateUserController,
+  deleteUserController,
 };
