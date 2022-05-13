@@ -52,7 +52,10 @@ const userLoginService = ({ email, password }) => {
 };
 
 const updateUserService = async ({ user, body }) => {
-  body.password = await bcrypt.hash(body.password, 10);
+  if (body.password) {
+    body.password = await bcrypt.hash(body.password, 10);
+  }
+
   body.updatedOn = new Date();
 
   Object.assign(user, body);
