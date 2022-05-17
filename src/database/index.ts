@@ -2,13 +2,23 @@ import { faker } from "@faker-js/faker";
 import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcryptjs";
 
-const users = [];
+interface IUser {
+  uuid: string;
+  name: string;
+  email: string;
+  password: string;
+  isAdm: boolean;
+  createdOn: Date;
+  updatedOn: Date;
+}
 
-const populateDB = (usersNumber) => {
+const users: Array<IUser> = [];
+
+const populateDB = (usersNumber: number) => {
   for (let i = 0; i < usersNumber; i++) {
     let firstName = faker.name.firstName();
     let pwd = faker.datatype.string(10);
-    let random = Boolean(Math.round(Math.random() < 0.1));
+    let random = faker.datatype.boolean();
 
     users.push({
       uuid: uuidv4(),
@@ -16,12 +26,12 @@ const populateDB = (usersNumber) => {
       email: faker.internet.email(firstName).toLowerCase(),
       password: bcrypt.hashSync(pwd, 10),
       isAdm: random,
-      createdOn: faker.date.between(),
-      updatedOn: faker.date.between(),
+      createdOn: new Date(),
+      updatedOn: new Date(),
     });
   }
 };
 
 populateDB(10);
 
-export default users;
+export { users, IUser };

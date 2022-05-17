@@ -1,4 +1,4 @@
-import users from "../database";
+import { IUser, users } from "../database";
 import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -10,7 +10,7 @@ dotenv.config();
 const createUserService = async ({ body }) => {
   body.password = await bcrypt.hash(body.password, 10);
 
-  const newUser = {
+  const newUser: IUser = {
     uuid: uuidv4(),
     name: body.name,
     email: body.email,
