@@ -1,13 +1,17 @@
 import adminsOnly from "./adminsOnly.middleware";
 import getUserByIdOr404 from "./getUserByIdOr404.middleware";
-import verifyAuthToken from "./verifyAuthToken.middleware";
-import verifyEmailAvailability from "./verifyEmailAvailability.middleware";
-import verifyUserPermissions from "./verifyUserPermissions.middleware";
+import validateAuthToken from "./validateAuthToken.middleware";
+import validateEmailAvailability from "./validateEmailAvailability.middleware";
+import validateUserPermissions from "./validateUserPermissions.middleware";
+import validateUserCreate from "./validateUserCreate.middleware";
+import validateUserUpdate from "./validateUserUpdate.middleware";
 
 export {
   getUserByIdOr404,
   adminsOnly,
-  verifyAuthToken,
-  verifyEmailAvailability,
-  verifyUserPermissions,
+  validateAuthToken,
+  validateEmailAvailability,
+  validateUserPermissions,
+  validateUserCreate,
+  validateUserUpdate,
 };

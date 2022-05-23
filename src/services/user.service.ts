@@ -1,80 +1,69 @@
-import { IUser, users } from "../database";
-import { v4 as uuidv4 } from "uuid";
-import * as bcrypt from "bcryptjs";
+import { User } from "../entities/User";
+import { userWithoutPassword } from "../utils";
+import { Request } from "express";
+import { userRepository } from "../repositories";
+import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { userWithoutPassword } from "../utils";
 
 dotenv.config();
 
-const createUserService = async ({ body }) => {
-  body.password = await bcrypt.hash(body.password, 10);
+interface IStatusMesage {
+  status: number;
+  message: object;
+}
 
-  const newUser: IUser = {
-    uuid: uuidv4(),
-    name: body.name,
-    email: body.email,
-    password: body.password,
-    isAdm: body.isAdm ?? false,
-    createdOn: new Date(),
-    updatedOn: new Date(),
+class UserService {
+  insertUserService = async ({ body }: Request): Promise<Partial<User>> => {
+    body.password = await bcrypt.hash(body.password, 10);
+
+    const user = await userRepository.save({ ...body });
+
+    return userWithoutPassword(user);
   };
 
-  users.push(newUser);
+  loginService = async ({ body }: Request): Promise<IStatusMesage> => {
+    const foundUser = await userRepository.findOneBy({
+      email: body.email.toLowerCase(),
+    });
 
-  return userWithoutPassword(newUser);
-};
+    if (!foundUser) {
+      return { status: 401, message: { message: "Wrong email/password." } };
+    }
 
-const readUserProfileService = ({ decoded }) => {
-  const user = users.find((element) => element.uuid === decoded.uuid);
+    if (!(await foundUser.comparePwd(body.password))) {
+      return { status: 401, message: { message: "Wrong email/password." } };
+    }
 
-  return userWithoutPassword(user);
-};
+    const token = jwt.sign({ ...foundUser }, process.env.SECRET_KEY as string, {
+      expiresIn: process.env.EXPIRES_IN,
+    });
 
-const userLoginService = ({ email, password }) => {
-  const user = users.find((element) => element.email === email);
+    return { status: 200, message: { token } };
+  };
 
-  if (!user) {
-    return { status: 401, message: { message: "Wrong email/password." } };
-  }
+  getAllUsersService = async (): Promise<Array<Partial<User>>> => {
+    const users = (await userRepository.findAll()).map((user: User) =>
+      userWithoutPassword(user)
+    );
 
-  const passwordMatch = bcrypt.compareSync(password, user.password);
+    return users;
+  };
 
-  if (!passwordMatch) {
-    return { status: 401, message: { message: "Wrong email/password." } };
-  }
+  updateUserService = async ({
+    user,
+    body,
+  }: Request): Promise<Partial<User>> => {
+    await userRepository.update(user.id, { ...body });
 
-  const token = jwt.sign(user, process.env.SECRET_KEY, {
-    expiresIn: process.env.EXPIRES_IN,
-  });
+    return userWithoutPassword({ ...user, ...body });
+  };
 
-  return { status: 200, message: { token } };
-};
+  deleteUserService = async ({ user }: Request): Promise<Partial<User>> => {
+    await userRepository.delete(user.id);
 
-const updateUserService = async ({ user, body }) => {
-  if (body.password) {
-    body.password = await bcrypt.hash(body.password, 10);
-  }
+    return userWithoutPassword(user);
+  };
+}
 
-  body.updatedOn = new Date();
-
-  Object.assign(user, body);
-
-  return userWithoutPassword(user);
-};
-
-const deleteUserService = ({ user }) => {
-  const userIndex = users.findIndex((element) => element === user);
-
-  users.splice(userIndex, 1);
-
-  return { message: "User deleted with success" };
-};
-
-export {
-  createUserService,
-  readUserProfileService,
-  userLoginService,
-  updateUserService,
-  deleteUserService,
-};
+export default new UserService();

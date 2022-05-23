@@ -1,39 +1,52 @@
 import { Router } from "express";
-import {
-  createUserController,
-  readUsersController,
-  readUserProfileController,
-  updateUserController,
-  userLoginController,
-  deleteUserController,
-} from "../controllers/user.controller";
+import { userController } from "../controllers";
 import {
   getUserByIdOr404,
   adminsOnly,
-  verifyAuthToken,
-  verifyEmailAvailability,
-  verifyUserPermissions,
+  validateEmailAvailability,
+  validateAuthToken,
+  validateUserPermissions,
+  validateUserCreate,
+  validateUserUpdate,
 } from "../middlewares";
 
 const router = Router();
 
-router.post("/users", verifyEmailAvailability, createUserController);
-router.post("/login", userLoginController);
-router.get("/users", verifyAuthToken, adminsOnly, readUsersController);
-router.get("/users/profile", verifyAuthToken, readUserProfileController);
-router.patch(
-  "/users/:uuid",
-  verifyAuthToken,
+router.post(
+  "/users",
+  validateUserCreate,
+  validateEmailAvailability,
+  userController.insertUserController
+);
+router.post("/login", userController.loginController);
+router.get(
+  "/users",
+  validateAuthToken,
+  adminsOnly,
+  userController.getAllUserController
+);
+router.get(
+  "/users/:id",
+  validateAuthToken,
   getUserByIdOr404,
-  verifyUserPermissions,
-  updateUserController
+  validateUserPermissions,
+  userController.getUserByIdController
+);
+router.patch(
+  "/users/:id",
+  validateAuthToken,
+  getUserByIdOr404,
+  validateUserPermissions,
+  validateUserUpdate,
+  validateEmailAvailability,
+  userController.updateUserController
 );
 router.delete(
-  "/users/:uuid",
-  verifyAuthToken,
+  "/users/:id",
+  validateAuthToken,
   getUserByIdOr404,
-  verifyUserPermissions,
-  deleteUserController
+  validateUserPermissions,
+  userController.deleteUserController
 );
 
 export default router;

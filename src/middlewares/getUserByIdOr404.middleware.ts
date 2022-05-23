@@ -1,18 +1,28 @@
-import { users } from "../database";
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+import { userRepository } from "../repositories";
 
-const getUserByIdOr404 = (req: Request, res: Response, next: NextFunction) => {
-  const { uuid } = req.params;
+const getUserByIdOr404 = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.params;
 
-  const user = users.find((user) => user.uuid === uuid);
+    const user = await userRepository.findOneBy({ id });
 
-  if (!user) {
-    return res.status(404).json({ error: "User not found" });
+    if (!user) {
+      throw new Error();
+    }
+
+    req.user = user;
+
+    next();
+  } catch (err: any) {
+    if (err instanceof Error) {
+      return res.status(404).json({ error: "User not found" });
+    }
   }
-
-  req.user = user;
-
-  next();
 };
 
 export default getUserByIdOr404;

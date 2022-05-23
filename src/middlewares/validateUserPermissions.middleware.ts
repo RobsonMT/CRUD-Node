@@ -1,18 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 
-const verifyUserPermissions = (
+const validateUserPermissions = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { uuid } = req.params;
-  const { decoded } = req;
-
-  if (!decoded.isAdm && decoded.uuid != uuid) {
+  if (!req.decoded.isAdm && req.decoded.id != req.params.id) {
     return res.status(401).json({ message: "Missing admin permissions." });
   }
 
   next();
 };
 
-export default verifyUserPermissions;
+export default validateUserPermissions;

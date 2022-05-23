@@ -1,17 +1,3 @@
-import {
-  createUserController,
-  readUsersController,
-  readUserProfileController,
-  userLoginController,
-  updateUserController,
-  deleteUserController,
-} from "./user.controller";
+import userController from "./user.controller";
 
-export {
-  createUserController,
-  readUsersController,
-  readUserProfileController,
-  userLoginController,
-  updateUserController,
-  deleteUserController,
-};
+export { userController };

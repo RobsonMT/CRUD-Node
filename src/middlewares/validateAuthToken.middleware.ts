@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { Request, Response, NextFunction } from "express";
-import { IUser } from "../database";
+import { User } from "../entities/User";
 
 dotenv.config();
 
-const verifyAuthToken = (req: Request, res: Response, next: NextFunction) => {
+const validateAuthToken = (req: Request, res: Response, next: NextFunction) => {
   let token = req.headers.authorization;
 
   if (!token) {
@@ -16,15 +16,15 @@ const verifyAuthToken = (req: Request, res: Response, next: NextFunction) => {
 
   token = token.split(" ")[1];
 
-  jwt.verify(token, process.env.SECRET_KEY, (error, decoded) => {
+  jwt.verify(token, process.env.SECRET_KEY as string, (error, decoded) => {
     if (error) {
       return res.status(401).json({ message: "Invalid token." });
     }
 
-    req.decoded = decoded as IUser;
+    req.decoded = decoded as User;
 
     next();
   });
 };
 
-export default verifyAuthToken;
+export default validateAuthToken;

@@ -1,7 +1,16 @@
 import app from "./app";
+import { AppDataSource } from "./data-source";
 
-const port = 3000;
+const PORT = 3000;
 
-app.listen(port, () => {
-  console.log(`App running!\nhttp://localhost:${port}/`);
-});
+AppDataSource.initialize()
+  .then(() => {
+    console.log("Database connected.");
+
+    app.listen(PORT, () => {
+      console.log(`App running!\nhttp://localhost:${PORT}/`);
+    });
+  })
+  .catch((err) => {
+    console.error(err);
+  });

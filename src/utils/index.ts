@@ -1,9 +1,11 @@
-import { IUser } from "../database";
+import { User } from "../entities/User";
 
-const userWithoutPassword = (user: IUser) => {
+export const userWithoutPassword = (user: User) => {
   const { password, ...newUserData } = user;
 
   return newUserData;
 };
 
-export { userWithoutPassword };
+export const capitalizeFirstLetter = (string: string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
