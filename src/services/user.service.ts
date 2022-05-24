@@ -2,24 +2,16 @@ import { User } from "../entities/User";
 import { userWithoutPassword } from "../utils";
 import { Request } from "express";
 import { userRepository } from "../repositories";
-import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { IStatusMesage } from "../interfaces";
 
 dotenv.config();
 
-interface IStatusMesage {
-  status: number;
-  message: object;
-}
-
 class UserService {
   insertUserService = async ({ body }: Request): Promise<Partial<User>> => {
-    body.password = await bcrypt.hash(body.password, 10);
-
-    const user = await userRepository.save({ ...body });
-
-    return userWithoutPassword(user);
+    const newUser = await userRepository.save({ ...body });
+    return userWithoutPassword(newUser);
   };
 
   loginService = async ({ body }: Request): Promise<IStatusMesage> => {
@@ -28,11 +20,11 @@ class UserService {
     });
 
     if (!foundUser) {
-      return { status: 401, message: { message: "Wrong email/password." } };
+      return { status: 403, message: { message: "Wrong email/password." } };
     }
 
     if (!(await foundUser.comparePwd(body.password))) {
-      return { status: 401, message: { message: "Wrong email/password." } };
+      return { status: 403, message: { message: "Wrong email/password." } };
     }
 
     const token = jwt.sign({ ...foundUser }, process.env.SECRET_KEY as string, {
@@ -55,13 +47,11 @@ class UserService {
     body,
   }: Request): Promise<Partial<User>> => {
     await userRepository.update(user.id, { ...body });
-
     return userWithoutPassword({ ...user, ...body });
   };
 
   deleteUserService = async ({ user }: Request): Promise<Partial<User>> => {
     await userRepository.delete(user.id);
-
     return userWithoutPassword(user);
   };
 }

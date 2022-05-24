@@ -3,8 +3,7 @@ import getUserByIdOr404 from "./getUserByIdOr404.middleware";
 import validateAuthToken from "./validateAuthToken.middleware";
 import validateEmailAvailability from "./validateEmailAvailability.middleware";
 import validateUserPermissions from "./validateUserPermissions.middleware";
-import validateUserCreate from "./validateUserCreate.middleware";
-import validateUserUpdate from "./validateUserUpdate.middleware";
+import validadeSchema from "./validateSchema.middleware";
 
 export {
   getUserByIdOr404,
@@ -12,6 +11,5 @@ export {
   validateAuthToken,
   validateEmailAvailability,
   validateUserPermissions,
-  validateUserCreate,
-  validateUserUpdate,
+  validadeSchema,
 };

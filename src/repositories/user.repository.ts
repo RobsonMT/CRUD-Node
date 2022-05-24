@@ -1,40 +1,29 @@
-import { DeleteResult, Repository, UpdateResult } from "typeorm";
+import { Repository } from "typeorm";
 import { AppDataSource } from "../data-source";
-import { User } from "../entities/User";
-import * as bcrypt from "bcrypt";
-
-interface IUserRepository {
-  save: (user: User) => Promise<User>;
-  findAll: () => Promise<Array<User>>;
-  findOneBy: (payload: object) => Promise<User | null>;
-  update: (id: string, payload: Partial<User>) => Promise<UpdateResult>;
-  delete: (id: string) => Promise<DeleteResult>;
-}
+import { IUserRepository } from "../interfaces";
+import { User } from "../entities";
 
 class UserRepository implements IUserRepository {
-  private repo: Repository<User>;
+  private repository: Repository<User>;
 
   constructor() {
-    this.repo = AppDataSource.getRepository(User);
+    this.repository = AppDataSource.getRepository(User);
   }
 
-  save = async (user: User) => await this.repo.save(user);
+  save = async (user: User) => await this.repository.save(user);
 
-  findAll: () => Promise<User[]> = async () => await this.repo.find();
+  findAll: () => Promise<Array<User>> = async () =>
+    await this.repository.find();
 
   findOneBy = async (payload: object) => {
-    return await this.repo.findOneBy({ ...payload });
+    return await this.repository.findOneBy({ ...payload });
   };
 
   update = async (id: string, payload: Partial<User>) => {
-    if (payload.password) {
-      payload.password = await bcrypt.hash(payload.password, 10);
-    }
-
-    return await this.repo.update(id, { ...payload });
+    return await this.repository.update(id, { ...payload });
   };
 
-  delete = async (id: string) => await this.repo.delete(id);
+  delete = async (id: string) => await this.repository.delete(id);
 }
 
 export default new UserRepository();

@@ -1,11 +1,16 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 import { compare } from "bcrypt";
-import { v4 as uuid } from "uuid";
 
 @Entity("users")
 export class User {
   @PrimaryGeneratedColumn("uuid")
-  readonly id: string;
+  id: string;
 
   @Column({ length: 20 })
   name: string;
@@ -19,17 +24,11 @@ export class User {
   @Column({ default: false })
   isAdm?: boolean;
 
-  @Column({ default: new Date() })
-  createdOn: Date;
+  @CreateDateColumn({ type: "timestamp" })
+  createdAt: Date;
 
-  @Column({ default: new Date() })
-  updatedOn: Date;
-
-  constructor() {
-    if (!this.id) {
-      this.id = uuid();
-    }
-  }
+  @UpdateDateColumn({ type: "timestamp" })
+  updatedAt: Date;
 
   comparePwd = async (recievedPwd: string): Promise<boolean> => {
     return await compare(recievedPwd, this.password);

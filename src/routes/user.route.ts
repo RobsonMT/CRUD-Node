@@ -6,42 +6,50 @@ import {
   validateEmailAvailability,
   validateAuthToken,
   validateUserPermissions,
-  validateUserCreate,
-  validateUserUpdate,
+  validadeSchema,
 } from "../middlewares";
+import {
+  createUserSchema,
+  loginUserSchema,
+  updateUserSchema,
+} from "../schemas";
 
-const router = Router();
+const userRouter = Router();
 
-router.post(
+userRouter.post(
   "/users",
-  validateUserCreate,
+  validadeSchema(createUserSchema),
   validateEmailAvailability,
   userController.insertUserController
 );
-router.post("/login", userController.loginController);
-router.get(
+userRouter.post(
+  "/login",
+  validadeSchema(loginUserSchema),
+  userController.loginController
+);
+userRouter.get(
   "/users",
   validateAuthToken,
   adminsOnly,
   userController.getAllUserController
 );
-router.get(
+userRouter.get(
   "/users/:id",
   validateAuthToken,
   getUserByIdOr404,
   validateUserPermissions,
   userController.getUserByIdController
 );
-router.patch(
+userRouter.patch(
   "/users/:id",
   validateAuthToken,
   getUserByIdOr404,
   validateUserPermissions,
-  validateUserUpdate,
+  validadeSchema(updateUserSchema),
   validateEmailAvailability,
   userController.updateUserController
 );
-router.delete(
+userRouter.delete(
   "/users/:id",
   validateAuthToken,
   getUserByIdOr404,
@@ -49,4 +57,4 @@ router.delete(
   userController.deleteUserController
 );
 
-export default router;
+export default userRouter;
